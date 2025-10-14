@@ -1,10 +1,13 @@
-import streamlit as st
+from flask import Flask, request, render_template
 import pickle
-import string
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
+import string
 
+app = Flask(__name__)
+model = pickle.load(open('model.pkl', 'rb'))
+vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 ps = PorterStemmer()
 
 def transform_message(message):
@@ -31,53 +34,21 @@ def transform_message(message):
 
     return " ".join(y)
 
-st.markdown("""
-    <style>
-        .centered {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding-top: 50px;
-        }
-        input[type="text"] {
-            width: 300px;
-            padding: 10px;
-            font-size: 16px;
-        }
-        .result {
-            font-size: 24px;
-            margin-top: 20px;
-            color: #333;
-        }
-    </style>
-    <div class="centered">
-        <h2>Spam Classifier</h2>
-    </div>
-""", unsafe_allow_html=True)
 
-# Load model and vectorizer
-model = pickle.load(open('model.pkl', 'rb'))
-vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 
-# Streamlit UI
-st.title('Spam and Ham Classifier')
 
-input_sms = st.text_area("", placeholder="Type your message here...")
-
-if st.button("Predict"):
-    if input_sms:
-        # 1. Preprocess
-        transformed_sms = transform_message(input_sms)
-
-        # 2. Vectorize
-        vector_input = vectorizer.transform([transformed_sms]).toarray()
-
-        # 3. Predict
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    prediction = None
+    if request.method == 'POST':
+        message = request.form['message']
+        transformed = transform_message(message)
+        vector_input = vectorizer.transform([transformed]).toarray()
         result = model.predict(vector_input)[0]
+        prediction = 'Spam' if result == 1 else 'Not Spam'
 
-        label = "Spam" if result else "Not Spam"
-        color = "red" if label == "Spam" else "green"
-        st.markdown(f"<div class='result' style='color:{color}; text-align:center;'>{label}</div>", unsafe_allow_html=True)
-    else:
-        st.warning("Please enter a message before classifying.")
+    return render_template('index.html', prediction=prediction)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+

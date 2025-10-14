@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spam Classifier</title>
+  <!-- Bootstrap CSS -->
+  <link 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+    rel="stylesheet"
+  >
+</head>
+<body class="text-center mt-5">
+
+  <div class="container">
+    <h2 class="mb-4">Spam Classifier</h2>
+    <form id="classifierForm" method="POST" class="d-flex flex-column align-items-center">
+      
+      <input 
+        id="messageInput" 
+        class="form-control w-50 mb-3" 
+        type="text" 
+        placeholder="Enter your message..." 
+        aria-label="message input"
+        name="message"
+      >
+
+      <button 
+        id="classifyButton" 
+        type="submit" 
+        class="btn btn-secondary btn-lg" 
+        disabled
+      >
+        Classify
+      </button>
+
+      <div id="loadingBar" class="progress w-50 mt-4" style="display: none;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" 
+            style="width: 100%"></div>
+      </div>
+  </div>
+    </form>
+
+    {% if prediction %}
+    <div class="mt-5 d-flex justify-content-center">
+      <div class="card shadow-sm" style="width: 22rem;">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Prediction Result</h5>
+          {% if prediction == 'Spam' %}
+            <span class="badge bg-danger fs-5 px-3 py-2">Spam</span>
+          {% else %}
+            <span class="badge bg-primary fs-5 px-3 py-2">Not Spam</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+<div class="card mx-auto shadow-sm mt-5" style="width: 33rem;">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Project Description</h5>
+
+    <div class="mt-3">
+      <p class="lead text-muted">
+        A machine learning–based application that detects and filters spam messages from legitimate ones in real time.
+        The app uses natural language processing (NLP) techniques to preprocess text data and a trained classification model
+        to predict whether an incoming message is spam or not.
+      </p>
+    </div>
+
+    <a href="https://github.com/SiDeRaLBeBa/Spam-Classifier.git" class="card-link">GitHub Repo</a>
+  </div>
+</div>
+
+
+  <script>
+    const input = document.getElementById('messageInput');
+    const button = document.getElementById('classifyButton');
+    const form = document.getElementById('classifierForm');
+    const loadingBar = document.getElementById('loadingBar');
+
+
+    input.addEventListener('input', () => {
+      if (input.value.trim() !== "") {
+        button.classList.remove('btn-secondary');
+        button.classList.add('btn-primary');
+        button.disabled = false;
+      } else {
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-secondary');
+        button.disabled = true;
+      }
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // stop immediate submission
+      loadingBar.style.display = 'block';
+      button.disabled = true;
+
+      // small delay so user sees the loading bar
+      setTimeout(() => {
+        form.submit(); // now submit the form
+      }, 100); // 100ms delay
+    });
+  </script>
+
+</body>
+</html>
