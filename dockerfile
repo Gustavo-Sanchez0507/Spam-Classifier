@@ -9,13 +9,13 @@ COPY . /app
 
 # Install dependencies
 RUN pip install --upgrade pip
-RUN pip install streamlit nltk scikit-learn
+RUN pip install --no-cache-dir flask nltk pandas scikit-learn
 
 # Download NLTK data
-RUN python -m nltk.downloader stopwords punkt
+RUN python -m nltk.downloader all
 
-# Expose Streamlit port
-EXPOSE 8501
+# Expose Flask port
+EXPOSE 5000
 
 # Run the app
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["python", "app.py"]

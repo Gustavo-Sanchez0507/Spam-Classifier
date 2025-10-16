@@ -1,11 +1,16 @@
+import nltk
+
+
 from flask import Flask, request, render_template
 import pickle
-import nltk
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 import string
 
+
+
 app = Flask(__name__)
+
 model = pickle.load(open('model.pkl', 'rb'))
 vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 ps = PorterStemmer()
@@ -50,5 +55,4 @@ def home():
     return render_template('index.html', prediction=prediction)
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
+    app.run(host='0.0.0.0', port=5000, debug=True)
