@@ -74,6 +74,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('classifierForm');
   const loadingBar = document.getElementById('loadingBar');
 
+  // Ensure delete buttons work on initial page load via event delegation
+  const initialHistoryContainer = document.querySelector('#historyContainer');
+  if (initialHistoryContainer) {
+    initialHistoryContainer.removeEventListener('click', handleDeleteClick);
+    initialHistoryContainer.addEventListener('click', handleDeleteClick);
+  }
+
   input.addEventListener('input', () => {
     if (input.value.trim() !== "") {
       button.classList.remove('btn-secondary');
